@@ -7,52 +7,63 @@
 using namespace std;
 
 //интегрируемая функция 
-double func(double x)
+long double func(double x)
 {
-	return ( (4) / ( 1 + (x * x) ));
+	return (long double ( (4) / ( 1 + (x * x) ) ));
 }
 
 //функция для вычисления интеграла методом левых прямоугольников 
-double integr_lefttriangle(int n, double a, double b)
+long double integr_lefttriangle(int n, double a, double b)
 {
-	double sum = 0;
-	double step = (b - a) / n;//шаг
-	for (double i = a; i < b; i = i + step)
-		sum += func(i);//суммируем значения функции в узловых точках
-	return sum*step;//множим на величину шага и возвращаем в вызывающую функцию
-
-
+	long double sum = 0;
+	long double step = (b - a) / n;
+	for (long double i = a; i < b; i += step)
+		sum += func(i);
+	return sum * step;
 }
 
 
 int main()
 {
-	setlocale(LC_ALL, "rus");//для русских букв в консоли
-	
-	int n = 20;//количество точек разбиения
+	clock_t timeGlobal;
+	timeGlobal = clock();
+
 
 	ofstream fout;
 	fout.open("result.txt");
 	fout << "n\t\ttime\t\t\t\tPi value" << endl;
 
 	int baseIntCounter = 9;
-	int amax = baseIntCounter + 100;
+	int amax = 1000000000;
 
 
-	for (baseIntCounter; baseIntCounter < amax; baseIntCounter++)
+	for (baseIntCounter; baseIntCounter <= amax; baseIntCounter++)
 	{
 		clock_t time;
 		time = clock();
-		auto result = integr_lefttriangle(n, 0, 1);
+		auto result = integr_lefttriangle(baseIntCounter, 0, 1);
 		auto mytime = (float)time / CLOCKS_PER_SEC;
+
 		fout.setf(ios::fixed);
 		fout.precision(20);
 		time = clock() - time;
 		fout << baseIntCounter << "\t\t" << mytime << "\t\t";
-		fout.precision(20);
+		fout.precision(51);
 		fout << result << endl;
+		cout << "counting " << baseIntCounter << endl;
 	}
 	
+	timeGlobal = clock() - timeGlobal;
+	auto global = (float)timeGlobal / CLOCKS_PER_SEC;
+	if (global > 100) {
+		double seconds = global / 60;
+		double minutes = seconds / 60;
+		fout << endl << "Execution took: " << setprecision(10) << minutes << " minutes" << endl;
+	}
+	else {
+		fout << endl << "Execution took: " << setprecision(27) << global << " seconds" << endl;
+	}
+
 	fout.close();
 	return 0;
 }
