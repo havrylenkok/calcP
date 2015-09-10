@@ -35,7 +35,7 @@ int main()
 
 	int baseIntCounter = 9;
 	int amax = 1000000000;
-
+	 
 
 	for (baseIntCounter; baseIntCounter <= amax; baseIntCounter++)
 	{
