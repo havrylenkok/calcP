@@ -4,6 +4,7 @@
 #include <ctime>
 #include <locale.h>
 #include <iomanip>
+#include <omp.h>
 using namespace std;
 
 //интегрируемая функция 
@@ -17,6 +18,8 @@ long double integr_lefttriangle(int n, double a, double b)
 {
 	long double sum = 0;
 	long double step = (b - a) / n;
+	omp_set_num_threads(6);
+	#pragma omp parallel for 
 	for (long double i = a; i < b; i += step)
 		sum += func(i);
 	return sum * step;
@@ -33,25 +36,26 @@ int main()
 	fout.open("result.txt");
 	fout << "n\t\ttime\t\t\t\tPi value" << endl;
 
-	int baseIntCounter = 9;
-	int amax = 1000000000;
-	 
+	
 
-	for (baseIntCounter; baseIntCounter <= amax; baseIntCounter++)
-	{
+	int baseIntCounter = 1;
+	int amax = 1000000;
+	 
+	
+
 		clock_t time;
 		time = clock();
-		auto result = integr_lefttriangle(baseIntCounter, 0, 1);
+		auto result = integr_lefttriangle(1000000, 0, 1);
 		auto mytime = (float)time / CLOCKS_PER_SEC;
 
 		fout.setf(ios::fixed);
 		fout.precision(20);
 		time = clock() - time;
-		fout << baseIntCounter << "\t\t" << mytime << "\t\t";
+		fout << 1000000 << "\t\t" << mytime << "\t\t";
 		fout.precision(51);
 		fout << result << endl;
-		cout << "counting " << baseIntCounter << endl;
-	}
+		
+	
 	
 	timeGlobal = clock() - timeGlobal;
 	auto global = (float)timeGlobal / CLOCKS_PER_SEC;
